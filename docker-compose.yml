@@ -1,0 +1,41 @@
+services:
+  pedango:
+    build:
+      context: .
+      args:
+        VERSION: ${VERSION:-dev}
+    container_name: pedango
+    restart: unless-stopped
+    env_file: .env
+
+    # A media server needs its RTP and ICE ports reachable from outside, and
+    # Docker's userland proxy rewrites UDP source addresses in a way that
+    # breaks symmetric RTP latching. Host networking avoids both problems.
+    #
+    # On Docker Desktop for Mac or Windows host networking is unavailable, so
+    # comment this out and use the explicit port mapping below instead. Keep
+    # the published range identical to PEDANGO_RTP_PORT_MIN/MAX, or inbound
+    # audio will be silently dropped.
+    network_mode: host
+
+    # ports:
+    #   - "8080:8080/tcp"
+    #   - "5060:5060/udp"
+    #   - "20000-20400:20000-20400/udp"
+    #   - "40000-40400:40000-40400/udp"
+
+    environment:
+      PEDANGO_HTTP_ADDR: 0.0.0.0:8080
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

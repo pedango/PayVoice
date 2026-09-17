@@ -1,0 +1,31 @@
+# Build output
+/pedango
+/pedango.exe
+/bin/
+/dist/
+/out/
+
+# Local configuration. .env.example is committed; .env never is, because it
+# holds API tokens, the webhook secret and carrier credentials.
+.env
+.env.*
+!.env.example
+
+# Test and profiling artefacts
+*.test
+*.out
+coverage.*
+*.prof
+*.pprof
+
+# Captured media, for debugging a call
+*.wav
+*.pcap
+*.pcapng
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
