@@ -1,6 +1,11 @@
 module github.com/pedango/pedango
 
-go 1.27.0
+// This floor is set by the pion WebRTC stack, not by Pedango's own code, which
+// uses nothing newer than the method and wildcard routing added to
+// net/http.ServeMux in 1.22. Keep it as low as the dependencies allow: pinning
+// to whatever toolchain happened to be installed only shrinks the set of
+// environments that can build the container image.
+go 1.24.0
 
 require (
 	github.com/emiago/sipgo v1.6.0
