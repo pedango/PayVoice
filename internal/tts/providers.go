@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
 )
 
 // maxAudioBytes caps a provider response. Without a cap, a misconfigured
@@ -38,7 +38,7 @@ func (e *elevenLabs) Synthesize(ctx context.Context, r Request) ([]int16, error)
 		voice = e.cfg.VoiceID
 	}
 
-	// Asking for ulaw_8000 makes the provider do the resampling, so Pedango
+	// Asking for ulaw_8000 makes the provider do the resampling, so PayVoice
 	// receives exactly the format the telephone network wants and skips both a
 	// decode and a downsample on the critical path.
 	url := fmt.Sprintf(
@@ -156,7 +156,7 @@ func (h *httpProvider) Synthesize(ctx context.Context, r Request) ([]int16, erro
 // It exists so that the media path can be exercised end to end with no vendor
 // account: if a caller hears these beeps, then synthesis, queueing, mixing,
 // packetization and transport are all working, and any silence afterwards is a
-// provider problem rather than a Pedango problem.
+// provider problem rather than a PayVoice problem.
 type toneProvider struct{}
 
 func (toneProvider) Name() string { return "tone" }
@@ -164,7 +164,7 @@ func (toneProvider) Name() string { return "tone" }
 func (toneProvider) Synthesize(_ context.Context, r Request) ([]int16, error) {
 	words := strings.Fields(r.Text)
 	if len(words) == 0 {
-		words = []string{"pedango"}
+		words = []string{"payvoice"}
 	}
 	if len(words) > 24 {
 		words = words[:24]

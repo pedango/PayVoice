@@ -2,7 +2,7 @@ package audio
 
 import "math"
 
-// Pedango runs one uniform media plane: 8 kHz, mono, 16-bit linear PCM,
+// PayVoice runs one uniform media plane: 8 kHz, mono, 16-bit linear PCM,
 // carried as G.711 on every wire. A SIP leg and a browser leg therefore hold
 // byte-identical payloads and bridging costs nothing but a memory copy.
 const (

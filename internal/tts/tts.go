@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
 )
 
 // ErrUnknownProvider is returned when a request names a provider that is not

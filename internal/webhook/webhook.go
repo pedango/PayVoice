@@ -19,23 +19,23 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
 )
 
 // Header names carried on every delivery.
 const (
-	// HeaderSignature is Pedango's own signature header.
-	HeaderSignature = "X-Pedango-Signature"
+	// HeaderSignature is PayVoice's own signature header.
+	HeaderSignature = "X-PayVoice-Signature"
 	// HeaderSignatureCompat is an alias many bridges already read, sent so an
 	// existing receiver needs no change.
 	HeaderSignatureCompat = "X-Webhook-Signature"
 	// HeaderTimestamp carries the signing time for replay rejection.
-	HeaderTimestamp = "X-Pedango-Timestamp"
+	HeaderTimestamp = "X-PayVoice-Timestamp"
 	// HeaderDelivery is a unique id per attempt, for idempotent receivers.
-	HeaderDelivery = "X-Pedango-Delivery"
+	HeaderDelivery = "X-PayVoice-Delivery"
 	// HeaderEventType duplicates the event type for cheap routing.
-	HeaderEventType = "X-Pedango-Event"
+	HeaderEventType = "X-PayVoice-Event"
 )
 
 // Envelope is the JSON body delivered to the application.
@@ -215,7 +215,7 @@ func (d *Dispatcher) post(body []byte, eventType string) (int, error) {
 	sig := Sign(d.cfg.Secret, body)
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "Pedango/1.0")
+	req.Header.Set("User-Agent", "PayVoice/1.0")
 	req.Header.Set(HeaderSignature, sig)
 	req.Header.Set(HeaderSignatureCompat, sig)
 	req.Header.Set(HeaderTimestamp, timestamp)

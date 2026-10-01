@@ -1,4 +1,4 @@
-BINARY  := pedango
+BINARY  := payvoice
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
@@ -9,10 +9,10 @@ help: ## Show this help
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
 
 build: ## Build the binary
-	CGO_ENABLED=0 go build -trimpath -ldflags="$(LDFLAGS)" -o $(BINARY) ./cmd/pedango
+	CGO_ENABLED=0 go build -trimpath -ldflags="$(LDFLAGS)" -o $(BINARY) ./cmd/payvoice
 
 run: ## Run with the tone TTS provider, which needs no credentials
-	PEDANGO_TTS_PROVIDER=tone PEDANGO_LOG_LEVEL=debug go run ./cmd/pedango
+	PAYVOICE_TTS_PROVIDER=tone PAYVOICE_LOG_LEVEL=debug go run ./cmd/payvoice
 
 test: ## Run the tests
 	go test ./... -count=1
@@ -37,7 +37,7 @@ tidy: ## Tidy and verify modules
 	go mod verify
 
 docker: ## Build the container image
-	docker build --build-arg VERSION=$(VERSION) -t pedango:$(VERSION) -t pedango:latest .
+	docker build --build-arg VERSION=$(VERSION) -t payvoice:$(VERSION) -t payvoice:latest .
 
 clean: ## Remove build artefacts
 	rm -f $(BINARY) $(BINARY).exe coverage.out

@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/pedango/pedango/internal/audio"
+	"github.com/pedango/PayVoice/internal/audio"
 )
 
 // Transport is the network side of a leg. Both the SIP/RTP and the WebRTC
@@ -59,9 +59,9 @@ type Direction string
 
 // Call directions.
 const (
-	// Inbound is a call arriving at Pedango.
+	// Inbound is a call arriving at PayVoice.
 	Inbound Direction = "inbound"
-	// Outbound is a call Pedango placed.
+	// Outbound is a call PayVoice placed.
 	Outbound Direction = "outbound"
 )
 

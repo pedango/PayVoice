@@ -1,13 +1,13 @@
-# Pedango
+# PayVoice
 
-A SIP ⇄ WebRTC voice bridge in Go. Pedango puts a phone call and a browser call
+A SIP ⇄ WebRTC voice bridge in Go. PayVoice puts a phone call and a browser call
 into the same audio mix, so a caller on a GSM handset and a caller in a web app
 can talk to each other — or to the same voice agent — without either side
 knowing the other is on a different network.
 
 It was built for [PayPlus](https://github.com/), a Ghanaian payments platform
 where a customer with no data connection dials a normal phone number and ends
-up talking to a voice agent that lives on the internet. Nothing in Pedango is
+up talking to a voice agent that lives on the internet. Nothing in PayVoice is
 specific to payments: it is a media plane, and the application decides what the
 conversation means.
 
@@ -16,7 +16,7 @@ conversation means.
        │                                                    │
        │ SIP + RTP (G.711)                 WebRTC (G.711)   │
        ▼                                                    ▼
-   ┌─────────────────────── Pedango ───────────────────────────┐
+   ┌─────────────────────── PayVoice ───────────────────────────┐
    │  SIP UA  ·  RTP/RFC4733  │  mixer  │  ICE/DTLS-SRTP       │
    └───────────────────────────┬───────────────────────────────┘
                                │ signed webhooks (events)
@@ -36,10 +36,10 @@ conversation means.
 
 ## What it deliberately does not do
 
-Pedango holds no call logic, no state machine, no business rules. It does not
+PayVoice holds no call logic, no state machine, no business rules. It does not
 decide whether to answer a call, what to say, or what a spoken sentence means.
 It reports `leg.ringing` and waits. That separation is what lets the
-application be tested without a telephone and lets Pedango be tested without
+application be tested without a telephone and lets PayVoice be tested without
 the application.
 
 ## Design decisions worth knowing
@@ -77,8 +77,8 @@ on every live call.
 ## Quick start
 
 ```bash
-go build ./cmd/pedango
-PEDANGO_TTS_PROVIDER=tone ./pedango
+go build ./cmd/payvoice
+PAYVOICE_TTS_PROVIDER=tone ./payvoice
 ```
 
 That runs with no credentials at all. The `tone` TTS provider renders text as a
@@ -138,19 +138,19 @@ the twelve lines of JavaScript that arranges it.
 ## Configuration
 
 Everything is environment driven. The defaults run locally with no
-credentials; `PEDANGO_ENV=production` turns on guardrails that refuse to start
+credentials; `PAYVOICE_ENV=production` turns on guardrails that refuse to start
 without API tokens, a webhook secret of reasonable length, and HTTPS.
 
 The variables you will always set:
 
 | Variable | Purpose |
 | --- | --- |
-| `PEDANGO_API_TOKENS` | Comma-separated bearer tokens for the control plane |
-| `PEDANGO_WEBHOOK_URL` | Where events are delivered |
-| `PEDANGO_WEBHOOK_SECRET` | HMAC-SHA256 signing key for those events |
-| `PEDANGO_SIP_ENABLED` | Set `true` to accept and place phone calls |
-| `PEDANGO_SIP_PUBLIC_HOST` | The address to advertise in SDP, not the bind address |
-| `PEDANGO_TTS_PROVIDER` | `elevenlabs`, `http`, `tone`, or `silence` |
+| `PAYVOICE_API_TOKENS` | Comma-separated bearer tokens for the control plane |
+| `PAYVOICE_WEBHOOK_URL` | Where events are delivered |
+| `PAYVOICE_WEBHOOK_SECRET` | HMAC-SHA256 signing key for those events |
+| `PAYVOICE_SIP_ENABLED` | Set `true` to accept and place phone calls |
+| `PAYVOICE_SIP_PUBLIC_HOST` | The address to advertise in SDP, not the bind address |
+| `PAYVOICE_TTS_PROVIDER` | `elevenlabs`, `http`, `tone`, or `silence` |
 
 Generate secrets with `openssl rand -hex 32`. The full list is in
 [.env.example](.env.example).
@@ -172,7 +172,7 @@ function verify(rawBody, header, secret) {
 }
 ```
 
-Pedango sends the same value in both `X-Pedango-Signature` and
+PayVoice sends the same value in both `X-PayVoice-Signature` and
 `X-Webhook-Signature`, so an existing receiver needs no change.
 
 ## Tests

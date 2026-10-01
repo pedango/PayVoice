@@ -17,10 +17,10 @@ import (
 	"github.com/emiago/sipgo/sip"
 	"github.com/google/uuid"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
-	"github.com/pedango/pedango/internal/rtpx"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
+	"github.com/pedango/PayVoice/internal/rtpx"
 )
 
 // SIP response codes used by the service.
@@ -44,7 +44,7 @@ var (
 	ErrNoTrunk = errors.New("sipsvc: no SIP trunk configured")
 )
 
-// InboundHandler is called when a new call arrives, after Pedango has sent
+// InboundHandler is called when a new call arrives, after PayVoice has sent
 // 180 Ringing but before it answers. The application decides what happens
 // next by calling Answer or Hangup.
 type InboundHandler func(leg *media.Leg)
@@ -99,7 +99,7 @@ func New(o Options) (*Service, error) {
 	}
 
 	ua, err := sipgo.NewUA(
-		sipgo.WithUserAgent("Pedango"),
+		sipgo.WithUserAgent("PayVoice"),
 		sipgo.WithUserAgentHostname(hostname),
 	)
 	if err != nil {
@@ -124,7 +124,7 @@ func New(o Options) (*Service, error) {
 	contact := sip.ContactHeader{
 		Address: sip.Uri{
 			Scheme: "sip",
-			User:   "pedango",
+			User:   "payvoice",
 			Host:   hostname,
 			Port:   port,
 		},
@@ -362,7 +362,7 @@ func (s *Service) onBye(req *sip.Request, tx sip.ServerTransaction) {
 		return
 	}
 
-	// The BYE may belong to a call Pedango placed.
+	// The BYE may belong to a call PayVoice placed.
 	if dlg, err := s.dc.MatchRequestDialog(req); err == nil {
 		if leg := s.legForClientDialog(dlg); leg != nil {
 			s.forget(leg.ID)
@@ -448,7 +448,7 @@ func (s *Service) Originate(ctx context.Context, to, from, appRef string) (*medi
 	})
 
 	fromHDR := &sip.FromHeader{
-		DisplayName: "Pedango",
+		DisplayName: "PayVoice",
 		Address:     sip.Uri{Scheme: "sip", User: from, Host: s.cfg.Domain},
 		Params:      sip.NewParams(),
 	}

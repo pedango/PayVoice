@@ -1,10 +1,10 @@
 services:
-  pedango:
+  payvoice:
     build:
       context: .
       args:
         VERSION: ${VERSION:-dev}
-    container_name: pedango
+    container_name: payvoice
     restart: unless-stopped
     env_file: .env
 
@@ -14,7 +14,7 @@ services:
     #
     # On Docker Desktop for Mac or Windows host networking is unavailable, so
     # comment this out and use the explicit port mapping below instead. Keep
-    # the published range identical to PEDANGO_RTP_PORT_MIN/MAX, or inbound
+    # the published range identical to PAYVOICE_RTP_PORT_MIN/MAX, or inbound
     # audio will be silently dropped.
     network_mode: host
 
@@ -25,7 +25,7 @@ services:
     #   - "40000-40400:40000-40400/udp"
 
     environment:
-      PEDANGO_HTTP_ADDR: 0.0.0.0:8080
+      PAYVOICE_HTTP_ADDR: 0.0.0.0:8080
 
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]

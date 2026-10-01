@@ -13,8 +13,8 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
 )
 
 // deepgram streams mu-law audio to Deepgram's realtime endpoint.
@@ -145,7 +145,7 @@ func (s *deepgramStream) writeLoop() {
 	}
 }
 
-// deepgramResponse is the subset of the realtime message Pedango consumes.
+// deepgramResponse is the subset of the realtime message PayVoice consumes.
 type deepgramResponse struct {
 	Type    string `json:"type"`
 	IsFinal bool   `json:"is_final"`

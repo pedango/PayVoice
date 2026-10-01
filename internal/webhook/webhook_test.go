@@ -15,8 +15,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
 )
 
 func testLogger() *slog.Logger {
@@ -42,7 +42,7 @@ func TestSignMatchesIndependentHMAC(t *testing.T) {
 // TestSignIsCompatibleWithReceiver reproduces the verification a Node receiver
 // performs: HMAC-SHA256 over the raw body, hex encoded, with the sha256=
 // prefix stripped. This is the contract that keeps PayPlus able to validate
-// Pedango's events without any change on its side.
+// PayVoice's events without any change on its side.
 func TestSignIsCompatibleWithReceiver(t *testing.T) {
 	secret := "shared-secret-value-used-by-both-sides"
 	body := []byte(`{"id":"evt_1","type":"leg.ringing"}`)

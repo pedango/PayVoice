@@ -1,11 +1,11 @@
 # Protocol
 
-Pedango exposes a REST control plane and delivers events as signed webhooks.
+PayVoice exposes a REST control plane and delivers events as signed webhooks.
 The control plane is how the application acts; the webhooks are how it learns.
 
 ## Authentication
 
-Every `/v1/*` endpoint requires a bearer token from `PEDANGO_API_TOKENS`:
+Every `/v1/*` endpoint requires a bearer token from `PAYVOICE_API_TOKENS`:
 
 ```
 Authorization: Bearer <token>
@@ -15,7 +15,7 @@ Tokens are compared in constant time against every configured value, so a
 timing side channel cannot be used to recover one. `/healthz` and `/readyz` are
 unauthenticated so a load balancer can probe them, and carry no call detail.
 
-`PEDANGO_API_ALLOWED_IPS` adds an optional network allowlist on top.
+`PAYVOICE_API_ALLOWED_IPS` adds an optional network allowlist on top.
 
 ## Errors
 
@@ -32,12 +32,12 @@ Every failure uses one envelope:
 | `invalid_request` | 400 | Malformed body or missing field |
 | `leg_not_found` | 404 | No such leg |
 | `room_not_found` | 404 | No such room |
-| `room_full` | 409 | Room is at `PEDANGO_MAX_LEGS_PER_ROOM` |
+| `room_full` | 409 | Room is at `PAYVOICE_MAX_LEGS_PER_ROOM` |
 | `leg_busy` | 409 | Leg is already mixed into another room |
 | `not_ringing` | 409 | Answer called on a leg that is not ringing |
 | `no_common_codec` | 415 | Browser offered no G.711 |
-| `sip_disabled` | 503 | `PEDANGO_SIP_ENABLED` is false |
-| `no_trunk` | 503 | No `PEDANGO_SIP_TRUNK` configured |
+| `sip_disabled` | 503 | `PAYVOICE_SIP_ENABLED` is false |
+| `no_trunk` | 503 | No `PAYVOICE_SIP_TRUNK` configured |
 | `stt_disabled` | 503 | No recognition provider configured |
 | `originate_failed` | 502 | The carrier rejected the call |
 | `tts_failed` | 502 | The speech provider failed |
@@ -54,7 +54,7 @@ bridged call; a one-leg room is a caller talking to the agent.
 ```
 
 Both fields are optional. `id` is generated when omitted. `sample_rate` is
-accepted for compatibility and ignored: Pedango always mixes at 8 kHz and the
+accepted for compatibility and ignored: PayVoice always mixes at 8 kHz and the
 response states the real rate.
 
 ```json
@@ -166,7 +166,7 @@ end picks up, which arrives as an event.
 
 `duration_ms` counts from answer, so it is the billable duration. The jitter
 block is the honest health of the receive path: rising `Late` or `Resync` means
-`PEDANGO_JITTER_TARGET` is too low for that network.
+`PAYVOICE_JITTER_TARGET` is too low for that network.
 
 ### `POST /v1/legs/{id}/answer`
 
@@ -222,7 +222,7 @@ events. Recognition is closed automatically when the leg ends.
 { "candidate": { "candidate": "candidate:...", "sdpMid": "0", "sdpMLineIndex": 0 } }
 ```
 
-Feeds a trickled candidate from the browser. Pedango's own candidates are
+Feeds a trickled candidate from the browser. PayVoice's own candidates are
 already inside the answer, so this channel is one-way.
 
 ## WebRTC
@@ -246,7 +246,7 @@ The answer already contains gathered candidates, so the browser can apply it
 directly. Gathering is capped at two seconds so a slow STUN server cannot stall
 the request.
 
-The offer **must** include PCMU. Pedango does not negotiate Opus, and an
+The offer **must** include PCMU. PayVoice does not negotiate Opus, and an
 Opus-only offer is rejected with `no_common_codec`. See
 [BROWSER.md](BROWSER.md).
 
@@ -275,7 +275,7 @@ stuttering on every call.
 
 ## Webhook events
 
-Delivered as `POST` to `PEDANGO_WEBHOOK_URL`:
+Delivered as `POST` to `PAYVOICE_WEBHOOK_URL`:
 
 ```json
 {
@@ -290,11 +290,11 @@ Headers:
 
 | Header | Contents |
 | --- | --- |
-| `X-Pedango-Signature` | `sha256=<hex HMAC-SHA256 of the raw body>` |
+| `X-PayVoice-Signature` | `sha256=<hex HMAC-SHA256 of the raw body>` |
 | `X-Webhook-Signature` | The same value, for receivers that read this name |
-| `X-Pedango-Timestamp` | Unix seconds at signing, for replay rejection |
-| `X-Pedango-Delivery` | Unique per attempt, for idempotent receivers |
-| `X-Pedango-Event` | The event type, for cheap routing |
+| `X-PayVoice-Timestamp` | Unix seconds at signing, for replay rejection |
+| `X-PayVoice-Delivery` | Unique per attempt, for idempotent receivers |
+| `X-PayVoice-Event` | The event type, for cheap routing |
 
 Every event carries `leg_id` where one applies, `room_id` when the leg is
 mixed, and `app_ref` when the application supplied one.
@@ -322,8 +322,8 @@ of a PIN arrive as separate `dtmf.received` events, and delivering them out of
 order would authorise the wrong thing.
 
 Delivery is at-least-once. A 5xx or a timeout is retried with exponential
-backoff up to `PEDANGO_WEBHOOK_RETRIES`; a 4xx other than 429 is not retried,
-because a malformed event will never become valid. Use `X-Pedango-Delivery` to
+backoff up to `PAYVOICE_WEBHOOK_RETRIES`; a 4xx other than 429 is not retried,
+because a malformed event will never become valid. Use `X-PayVoice-Delivery` to
 deduplicate.
 
 If the receiver stalls long enough to fill the queue, events are **dropped**

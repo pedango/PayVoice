@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pedango/pedango/internal/audio"
+	"github.com/pedango/PayVoice/internal/audio"
 )
 
 // asteriskOffer is a realistic offer from a PBX, including the trailing
@@ -155,7 +155,7 @@ func TestParseOfferRejectsGarbage(t *testing.T) {
 	}
 }
 
-// TestBuildSDPIsParseable is the round trip that matters: what Pedango answers
+// TestBuildSDPIsParseable is the round trip that matters: what PayVoice answers
 // must be readable by the same parser, and must preserve the negotiated
 // payload types exactly.
 func TestBuildSDPIsParseable(t *testing.T) {
@@ -230,7 +230,7 @@ func TestOfferRemoteAddr(t *testing.T) {
 }
 
 func TestParseTrunkURIPlacesDialledNumber(t *testing.T) {
-	uri, err := parseTrunkURI("sip:trunk.carrier.gh:5060", "233245224253", "pedango.local")
+	uri, err := parseTrunkURI("sip:trunk.carrier.gh:5060", "233245224253", "payvoice.local")
 	if err != nil {
 		t.Fatalf("parseTrunkURI: %v", err)
 	}

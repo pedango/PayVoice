@@ -1,4 +1,4 @@
-// Package api exposes Pedango's control plane over HTTP.
+// Package api exposes PayVoice's control plane over HTTP.
 package api
 
 import (
@@ -13,13 +13,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
-	"github.com/pedango/pedango/internal/rtcsvc"
-	"github.com/pedango/pedango/internal/sipsvc"
-	"github.com/pedango/pedango/internal/stt"
-	"github.com/pedango/pedango/internal/tts"
-	"github.com/pedango/pedango/internal/webhook"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
+	"github.com/pedango/PayVoice/internal/rtcsvc"
+	"github.com/pedango/PayVoice/internal/sipsvc"
+	"github.com/pedango/PayVoice/internal/stt"
+	"github.com/pedango/PayVoice/internal/tts"
+	"github.com/pedango/PayVoice/internal/webhook"
 )
 
 // Server is the control-plane HTTP server.
@@ -138,7 +138,7 @@ func (s *Server) protect(h http.HandlerFunc) http.Handler {
 		if !s.authenticated(r) {
 			// The challenge tells an operator what is missing without
 			// revealing whether the token was wrong or simply absent.
-			w.Header().Set("WWW-Authenticate", `Bearer realm="pedango"`)
+			w.Header().Set("WWW-Authenticate", `Bearer realm="payvoice"`)
 			fail(w, http.StatusUnauthorized, "unauthorized", "Missing or invalid bearer token")
 			return
 		}

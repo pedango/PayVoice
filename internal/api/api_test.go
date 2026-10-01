@@ -14,13 +14,13 @@ import (
 	"github.com/pion/webrtc/v4"
 	pionmedia "github.com/pion/webrtc/v4/pkg/media"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
-	"github.com/pedango/pedango/internal/rtcsvc"
-	"github.com/pedango/pedango/internal/stt"
-	"github.com/pedango/pedango/internal/tts"
-	"github.com/pedango/pedango/internal/webhook"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
+	"github.com/pedango/PayVoice/internal/rtcsvc"
+	"github.com/pedango/PayVoice/internal/stt"
+	"github.com/pedango/PayVoice/internal/tts"
+	"github.com/pedango/PayVoice/internal/webhook"
 )
 
 const testToken = "test-token-that-is-at-least-32-chars-long"

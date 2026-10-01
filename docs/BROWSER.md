@@ -1,6 +1,6 @@
 # Browser client
 
-Pedango negotiates **G.711 only**. Browsers support it, but they offer Opus
+PayVoice negotiates **G.711 only**. Browsers support it, but they offer Opus
 first and will happily agree to it if you let them, so the client has to be
 told what to offer. This is the whole difference between a working client and
 a `no_common_codec` error.
@@ -36,7 +36,7 @@ async function connect(apiBase, token, roomId) {
   });
   preferG711(transceiver);
 
-  // Play what Pedango sends back.
+  // Play what PayVoice sends back.
   const audio = new Audio();
   audio.autoplay = true;
   pc.ontrack = (e) => { audio.srcObject = e.streams[0]; };
@@ -78,7 +78,7 @@ function preferG711(transceiver) {
   const { codecs } = RTCRtpReceiver.getCapabilities('audio');
 
   // telephone-event must be kept alongside the codec: it is how DTMF reaches
-  // Pedango, and DTMF is the only input channel that cannot be misheard.
+  // PayVoice, and DTMF is the only input channel that cannot be misheard.
   const wanted = codecs.filter((c) =>
     /pcmu|pcma|telephone-event/i.test(c.mimeType)
   );
@@ -96,7 +96,7 @@ which is stronger than merely ranking G.711 first.
 
 ## Waiting for candidates
 
-Pedango returns an answer with its candidates already gathered, so the simplest
+PayVoice returns an answer with its candidates already gathered, so the simplest
 correct client gathers its own before offering:
 
 ```js
@@ -148,12 +148,12 @@ const { sender } = await connect(apiBase, token, roomId);
 sender.dtmf.insertDTMF('4071', 160, 70);   // digits, tone ms, gap ms
 ```
 
-Pedango deduplicates the resulting packet burst and emits exactly one
+PayVoice deduplicates the resulting packet burst and emits exactly one
 `dtmf.received` event per keypress.
 
 ## Falling back to a phone call
 
-When the browser cannot hold a data path, ask Pedango to call the user instead
+When the browser cannot hold a data path, ask PayVoice to call the user instead
 and put that call in the same room. The user experiences an ordinary incoming
 phone call; the agent never notices the difference.
 
@@ -184,14 +184,14 @@ pc.onconnectionstatechange = () => {
 Note that this call is placed by your application server, not the browser: the
 control plane token must never reach the client. The snippets above show the
 token inline for brevity, but in production the browser should talk to your own
-backend, which holds the token and proxies to Pedango.
+backend, which holds the token and proxies to PayVoice.
 
 ## Troubleshooting
 
 | Symptom | Cause |
 | --- | --- |
 | `no_common_codec` | The offer was Opus-only. `setCodecPreferences` was not applied, or was applied to the wrong transceiver. |
-| Connects, but silence both ways | ICE picked an unreachable candidate. Set `PEDANGO_WEBRTC_PUBLIC_IP` on a cloud VM, and open the UDP port range. |
+| Connects, but silence both ways | ICE picked an unreachable candidate. Set `PAYVOICE_WEBRTC_PUBLIC_IP` on a cloud VM, and open the UDP port range. |
 | Audio one way only | Almost always NAT. Add a TURN server. |
 | DTMF never arrives | `telephone-event` was filtered out of the codec preferences. |
-| Choppy audio | Check `engine.late_ticks` in `GET /v1/stats`, then raise `PEDANGO_JITTER_TARGET`. |
+| Choppy audio | Check `engine.late_ticks` in `GET /v1/stats`, then raise `PAYVOICE_JITTER_TARGET`. |

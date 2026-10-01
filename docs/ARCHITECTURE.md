@@ -4,7 +4,7 @@ How audio actually moves through the process, and why it moves that way.
 
 ## One uniform media plane
 
-Everything inside Pedango is **8 kHz, mono, 16-bit linear PCM, in 20 ms frames
+Everything inside PayVoice is **8 kHz, mono, 16-bit linear PCM, in 20 ms frames
 of 160 samples**. Everything on the wire is **G.711**, on both the SIP side and
 the WebRTC side.
 
@@ -147,7 +147,7 @@ intelligible over background noise.
 
 ## Events
 
-Pedango holds no call logic. It reports what happened and waits.
+PayVoice holds no call logic. It reports what happened and waits.
 
 Events flow from the media clock into `webhook.Dispatcher`, which must never
 block — it is called from inside the 20 ms budget. Publishing is a
@@ -188,7 +188,7 @@ optionally restrict by address.
 
 **Symmetric RTP latching is guarded.** Sending media to wherever packets arrive
 from is required for NAT traversal, but latching to any arriving packet would
-let anyone who guesses the port inject audio into a live call. Pedango latches
+let anyone who guesses the port inject audio into a live call. PayVoice latches
 to the first source and only accepts a different one after the current source
 has gone quiet for two seconds — which happens when a carrier legitimately
 moves a call between media servers, and does not happen during an injection

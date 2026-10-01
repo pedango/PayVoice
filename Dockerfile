@@ -18,18 +18,18 @@ ARG VERSION=dev
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -trimpath \
     -ldflags="-s -w -X main.version=${VERSION}" \
-    -o /out/pedango ./cmd/pedango
+    -o /out/payvoice ./cmd/payvoice
 
 FROM alpine:3.20
 
 # ca-certificates is needed to reach TTS/STT providers and the webhook endpoint
 # over TLS. tzdata keeps log timestamps sane.
 RUN apk add --no-cache ca-certificates tzdata \
-    && adduser -D -u 10001 pedango
+    && adduser -D -u 10001 payvoice
 
-COPY --from=build /out/pedango /usr/local/bin/pedango
+COPY --from=build /out/payvoice /usr/local/bin/payvoice
 
-USER pedango
+USER payvoice
 
 # Control API. SIP and the RTP/WebRTC media ranges are published by the
 # orchestrator, since a media server needs host networking or an explicit
@@ -40,4 +40,4 @@ EXPOSE 5060/udp
 HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
     CMD wget -qO- http://127.0.0.1:8080/healthz || exit 1
 
-ENTRYPOINT ["/usr/local/bin/pedango"]
+ENTRYPOINT ["/usr/local/bin/payvoice"]

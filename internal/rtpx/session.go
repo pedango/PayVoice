@@ -10,7 +10,7 @@ import (
 
 	"github.com/pion/rtp"
 
-	"github.com/pedango/pedango/internal/audio"
+	"github.com/pedango/PayVoice/internal/audio"
 )
 
 // Session is one bidirectional RTP media path for a SIP leg.
@@ -382,7 +382,7 @@ func (s *Session) dispatch(pkt *rtp.Packet) {
 }
 
 // drainRTCP reads and discards RTCP. The socket must be serviced even though
-// Pedango does not act on reports: on some platforms an unread UDP socket
+// PayVoice does not act on reports: on some platforms an unread UDP socket
 // generates ICMP port-unreachable replies that make carriers tear the call
 // down.
 func (s *Session) drainRTCP() {

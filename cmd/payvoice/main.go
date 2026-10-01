@@ -1,6 +1,6 @@
-// Command pedango runs the SIP/WebRTC media bridge.
+// Command payvoice runs the SIP/WebRTC media bridge.
 //
-// Pedango is a media plane and nothing more. It carries audio between phone
+// PayVoice is a media plane and nothing more. It carries audio between phone
 // calls and browsers, reports what it hears as events, and speaks what it is
 // told to speak. Every decision about money, identity or conversation flow
 // belongs to the application that consumes those events.
@@ -16,15 +16,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/pedango/pedango/internal/api"
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
-	"github.com/pedango/pedango/internal/rtcsvc"
-	"github.com/pedango/pedango/internal/rtpx"
-	"github.com/pedango/pedango/internal/sipsvc"
-	"github.com/pedango/pedango/internal/stt"
-	"github.com/pedango/pedango/internal/tts"
-	"github.com/pedango/pedango/internal/webhook"
+	"github.com/pedango/PayVoice/internal/api"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
+	"github.com/pedango/PayVoice/internal/rtcsvc"
+	"github.com/pedango/PayVoice/internal/rtpx"
+	"github.com/pedango/PayVoice/internal/sipsvc"
+	"github.com/pedango/PayVoice/internal/stt"
+	"github.com/pedango/PayVoice/internal/tts"
+	"github.com/pedango/PayVoice/internal/webhook"
 )
 
 // version is stamped at build time with -ldflags.
@@ -32,7 +32,7 @@ var version = "dev"
 
 func main() {
 	if err := run(); err != nil && !errors.Is(err, context.Canceled) {
-		fmt.Fprintf(os.Stderr, "pedango: %v\n", err)
+		fmt.Fprintf(os.Stderr, "payvoice: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -45,7 +45,7 @@ func run() error {
 		return fmt.Errorf("configuration: %w", err)
 	}
 
-	log.Info("starting pedango",
+	log.Info("starting payvoice",
 		"version", version,
 		"env", cfg.Env,
 		"codec", cfg.Media.Codec,
@@ -89,7 +89,7 @@ func run() error {
 			Ports:  ports,
 			Emit:   hooks.Sink(),
 			Log:    log,
-			// Pedango does not decide whether to take a call. It reports the
+			// PayVoice does not decide whether to take a call. It reports the
 			// ringing leg and waits for the application to answer or reject.
 			OnInbound: func(leg *media.Leg) {
 				log.Info("inbound call",

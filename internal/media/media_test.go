@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
 )
 
 // fakeTransport records everything written so tests can assert on what a peer

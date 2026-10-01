@@ -1,9 +1,9 @@
-// Package config loads Pedango's runtime configuration from the environment.
+// Package config loads PayVoice's runtime configuration from the environment.
 //
-// Every value has a development-safe default so that `pedango` runs with no
+// Every value has a development-safe default so that `payvoice` runs with no
 // configuration at all, but production deployments must set at least
-// PEDANGO_API_TOKENS and PEDANGO_WEBHOOK_SECRET; Validate rejects the empty
-// values when PEDANGO_ENV is "production".
+// PAYVOICE_API_TOKENS and PAYVOICE_WEBHOOK_SECRET; Validate rejects the empty
+// values when PAYVOICE_ENV is "production".
 package config
 
 import (
@@ -48,14 +48,14 @@ type SIPConfig struct {
 	Enabled   bool
 	Listen    string
 	Transport string
-	// PublicHost is the address placed in Contact/Via and SDP when Pedango sits
+	// PublicHost is the address placed in Contact/Via and SDP when PayVoice sits
 	// behind NAT. Defaults to the listen host.
 	PublicHost string
 	// Domain is the SIP domain used in From/To URIs.
 	Domain string
 	// Trunk is where outbound INVITEs are sent, e.g. "sip:carrier.example:5060".
 	Trunk string
-	// Identity is the number Pedango presents as caller ID when originating.
+	// Identity is the number PayVoice presents as caller ID when originating.
 	Identity string
 
 	Register       bool
@@ -70,7 +70,7 @@ type RTPConfig struct {
 	Host    string
 	PortMin int
 	PortMax int
-	// SymmetricLatch makes Pedango send to the source address of the first
+	// SymmetricLatch makes PayVoice send to the source address of the first
 	// received packet rather than the SDP-advertised address. Required for most
 	// carriers behind NAT.
 	SymmetricLatch bool
@@ -121,7 +121,7 @@ type WebhookConfig struct {
 	Timeout time.Duration
 	Retries int
 	// Tolerance is how old a signed timestamp may be before the receiver should
-	// reject it. Published in docs; enforced by the receiver, not Pedango.
+	// reject it. Published in docs; enforced by the receiver, not PayVoice.
 	Tolerance time.Duration
 }
 
@@ -152,90 +152,90 @@ type STTConfig struct {
 // Load reads configuration from the process environment.
 func Load() *Config {
 	c := &Config{
-		Env:      env("PEDANGO_ENV", "development"),
-		LogLevel: env("PEDANGO_LOG_LEVEL", "info"),
-		LogJSON:  boolEnv("PEDANGO_LOG_JSON", false),
+		Env:      env("PAYVOICE_ENV", "development"),
+		LogLevel: env("PAYVOICE_LOG_LEVEL", "info"),
+		LogJSON:  boolEnv("PAYVOICE_LOG_JSON", false),
 
 		HTTP: HTTPConfig{
-			Addr:        env("PEDANGO_HTTP_ADDR", "127.0.0.1:8080"),
-			Tokens:      listEnv("PEDANGO_API_TOKENS", nil),
-			AllowedIPs:  listEnv("PEDANGO_API_ALLOWED_IPS", nil),
-			ReadTimeout: durEnv("PEDANGO_HTTP_READ_TIMEOUT", 10*time.Second),
-			TrustProxy:  boolEnv("PEDANGO_HTTP_TRUST_PROXY", false),
+			Addr:        env("PAYVOICE_HTTP_ADDR", "127.0.0.1:8080"),
+			Tokens:      listEnv("PAYVOICE_API_TOKENS", nil),
+			AllowedIPs:  listEnv("PAYVOICE_API_ALLOWED_IPS", nil),
+			ReadTimeout: durEnv("PAYVOICE_HTTP_READ_TIMEOUT", 10*time.Second),
+			TrustProxy:  boolEnv("PAYVOICE_HTTP_TRUST_PROXY", false),
 		},
 
 		SIP: SIPConfig{
-			Enabled:        boolEnv("PEDANGO_SIP_ENABLED", false),
-			Listen:         env("PEDANGO_SIP_LISTEN", "0.0.0.0:5060"),
-			Transport:      strings.ToLower(env("PEDANGO_SIP_TRANSPORT", "udp")),
-			PublicHost:     env("PEDANGO_SIP_PUBLIC_HOST", ""),
-			Domain:         env("PEDANGO_SIP_DOMAIN", ""),
-			Trunk:          env("PEDANGO_SIP_TRUNK", ""),
-			Identity:       env("PEDANGO_SIP_IDENTITY", ""),
-			Register:       boolEnv("PEDANGO_SIP_REGISTER", false),
-			RegistrarURI:   env("PEDANGO_SIP_REGISTRAR", ""),
-			Username:       env("PEDANGO_SIP_USERNAME", ""),
-			Password:       env("PEDANGO_SIP_PASSWORD", ""),
-			RegisterExpiry: durEnv("PEDANGO_SIP_REGISTER_EXPIRY", 300*time.Second),
+			Enabled:        boolEnv("PAYVOICE_SIP_ENABLED", false),
+			Listen:         env("PAYVOICE_SIP_LISTEN", "0.0.0.0:5060"),
+			Transport:      strings.ToLower(env("PAYVOICE_SIP_TRANSPORT", "udp")),
+			PublicHost:     env("PAYVOICE_SIP_PUBLIC_HOST", ""),
+			Domain:         env("PAYVOICE_SIP_DOMAIN", ""),
+			Trunk:          env("PAYVOICE_SIP_TRUNK", ""),
+			Identity:       env("PAYVOICE_SIP_IDENTITY", ""),
+			Register:       boolEnv("PAYVOICE_SIP_REGISTER", false),
+			RegistrarURI:   env("PAYVOICE_SIP_REGISTRAR", ""),
+			Username:       env("PAYVOICE_SIP_USERNAME", ""),
+			Password:       env("PAYVOICE_SIP_PASSWORD", ""),
+			RegisterExpiry: durEnv("PAYVOICE_SIP_REGISTER_EXPIRY", 300*time.Second),
 		},
 
 		RTP: RTPConfig{
-			Host:            env("PEDANGO_RTP_HOST", "0.0.0.0"),
-			PortMin:         intEnv("PEDANGO_RTP_PORT_MIN", 20000),
-			PortMax:         intEnv("PEDANGO_RTP_PORT_MAX", 20400),
-			SymmetricLatch:  boolEnv("PEDANGO_RTP_SYMMETRIC", true),
-			DTMFPayloadType: uint8(intEnv("PEDANGO_RTP_DTMF_PT", 101)),
+			Host:            env("PAYVOICE_RTP_HOST", "0.0.0.0"),
+			PortMin:         intEnv("PAYVOICE_RTP_PORT_MIN", 20000),
+			PortMax:         intEnv("PAYVOICE_RTP_PORT_MAX", 20400),
+			SymmetricLatch:  boolEnv("PAYVOICE_RTP_SYMMETRIC", true),
+			DTMFPayloadType: uint8(intEnv("PAYVOICE_RTP_DTMF_PT", 101)),
 		},
 
 		WebRTC: WebRTCConfig{
 			ICEServers: parseICEServers(
-				env("PEDANGO_ICE_URLS", "stun:stun.l.google.com:19302"),
-				env("PEDANGO_TURN_USERNAME", ""),
-				env("PEDANGO_TURN_CREDENTIAL", ""),
+				env("PAYVOICE_ICE_URLS", "stun:stun.l.google.com:19302"),
+				env("PAYVOICE_TURN_USERNAME", ""),
+				env("PAYVOICE_TURN_CREDENTIAL", ""),
 			),
-			UDPPortMin: intEnv("PEDANGO_WEBRTC_PORT_MIN", 40000),
-			UDPPortMax: intEnv("PEDANGO_WEBRTC_PORT_MAX", 40400),
-			NAT1To1IP:  env("PEDANGO_WEBRTC_PUBLIC_IP", ""),
+			UDPPortMin: intEnv("PAYVOICE_WEBRTC_PORT_MIN", 40000),
+			UDPPortMax: intEnv("PAYVOICE_WEBRTC_PORT_MAX", 40400),
+			NAT1To1IP:  env("PAYVOICE_WEBRTC_PUBLIC_IP", ""),
 		},
 
 		Media: MediaConfig{
-			Codec:           strings.ToLower(env("PEDANGO_CODEC", "pcmu")),
-			JitterTarget:    durEnv("PEDANGO_JITTER_TARGET", 60*time.Millisecond),
-			JitterMax:       durEnv("PEDANGO_JITTER_MAX", 240*time.Millisecond),
-			MaxLegsPerRoom:  intEnv("PEDANGO_MAX_LEGS_PER_ROOM", 8),
-			RoomIdleTimeout: durEnv("PEDANGO_ROOM_IDLE_TIMEOUT", 5*time.Minute),
-			LegMaxDuration:  durEnv("PEDANGO_LEG_MAX_DURATION", 30*time.Minute),
-			VADThreshold:    floatEnv("PEDANGO_VAD_THRESHOLD", 700),
-			EndOfSpeech:     durEnv("PEDANGO_END_OF_SPEECH", 700*time.Millisecond),
+			Codec:           strings.ToLower(env("PAYVOICE_CODEC", "pcmu")),
+			JitterTarget:    durEnv("PAYVOICE_JITTER_TARGET", 60*time.Millisecond),
+			JitterMax:       durEnv("PAYVOICE_JITTER_MAX", 240*time.Millisecond),
+			MaxLegsPerRoom:  intEnv("PAYVOICE_MAX_LEGS_PER_ROOM", 8),
+			RoomIdleTimeout: durEnv("PAYVOICE_ROOM_IDLE_TIMEOUT", 5*time.Minute),
+			LegMaxDuration:  durEnv("PAYVOICE_LEG_MAX_DURATION", 30*time.Minute),
+			VADThreshold:    floatEnv("PAYVOICE_VAD_THRESHOLD", 700),
+			EndOfSpeech:     durEnv("PAYVOICE_END_OF_SPEECH", 700*time.Millisecond),
 		},
 
 		Webhook: WebhookConfig{
-			URL:       env("PEDANGO_WEBHOOK_URL", ""),
-			Secret:    env("PEDANGO_WEBHOOK_SECRET", ""),
-			Timeout:   durEnv("PEDANGO_WEBHOOK_TIMEOUT", 5*time.Second),
-			Retries:   intEnv("PEDANGO_WEBHOOK_RETRIES", 3),
-			Tolerance: durEnv("PEDANGO_WEBHOOK_TOLERANCE", 5*time.Minute),
+			URL:       env("PAYVOICE_WEBHOOK_URL", ""),
+			Secret:    env("PAYVOICE_WEBHOOK_SECRET", ""),
+			Timeout:   durEnv("PAYVOICE_WEBHOOK_TIMEOUT", 5*time.Second),
+			Retries:   intEnv("PAYVOICE_WEBHOOK_RETRIES", 3),
+			Tolerance: durEnv("PAYVOICE_WEBHOOK_TOLERANCE", 5*time.Minute),
 		},
 
 		TTS: TTSConfig{
-			Provider:    strings.ToLower(env("PEDANGO_TTS_PROVIDER", "tone")),
-			APIKey:      env("PEDANGO_TTS_API_KEY", ""),
-			VoiceID:     env("PEDANGO_TTS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM"),
-			Model:       env("PEDANGO_TTS_MODEL", "eleven_turbo_v2_5"),
-			BaseURL:     env("PEDANGO_TTS_BASE_URL", ""),
-			Timeout:     durEnv("PEDANGO_TTS_TIMEOUT", 10*time.Second),
-			CacheSize:   intEnv("PEDANGO_TTS_CACHE_SIZE", 256),
-			CacheTTL:    durEnv("PEDANGO_TTS_CACHE_TTL", time.Hour),
-			MaxTextRune: intEnv("PEDANGO_TTS_MAX_CHARS", 1000),
+			Provider:    strings.ToLower(env("PAYVOICE_TTS_PROVIDER", "tone")),
+			APIKey:      env("PAYVOICE_TTS_API_KEY", ""),
+			VoiceID:     env("PAYVOICE_TTS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM"),
+			Model:       env("PAYVOICE_TTS_MODEL", "eleven_turbo_v2_5"),
+			BaseURL:     env("PAYVOICE_TTS_BASE_URL", ""),
+			Timeout:     durEnv("PAYVOICE_TTS_TIMEOUT", 10*time.Second),
+			CacheSize:   intEnv("PAYVOICE_TTS_CACHE_SIZE", 256),
+			CacheTTL:    durEnv("PAYVOICE_TTS_CACHE_TTL", time.Hour),
+			MaxTextRune: intEnv("PAYVOICE_TTS_MAX_CHARS", 1000),
 		},
 
 		STT: STTConfig{
-			Provider:    strings.ToLower(env("PEDANGO_STT_PROVIDER", "none")),
-			APIKey:      env("PEDANGO_STT_API_KEY", ""),
-			Model:       env("PEDANGO_STT_MODEL", "nova-2-phonecall"),
-			BaseURL:     env("PEDANGO_STT_BASE_URL", ""),
-			Language:    env("PEDANGO_STT_LANGUAGE", "en"),
-			Endpointing: intEnv("PEDANGO_STT_ENDPOINTING", 300),
+			Provider:    strings.ToLower(env("PAYVOICE_STT_PROVIDER", "none")),
+			APIKey:      env("PAYVOICE_STT_API_KEY", ""),
+			Model:       env("PAYVOICE_STT_MODEL", "nova-2-phonecall"),
+			BaseURL:     env("PAYVOICE_STT_BASE_URL", ""),
+			Language:    env("PAYVOICE_STT_LANGUAGE", "en"),
+			Endpointing: intEnv("PAYVOICE_STT_ENDPOINTING", 300),
 		},
 	}
 
@@ -256,7 +256,7 @@ func (c *Config) Production() bool { return c.Env == "production" }
 // Validate returns an error for any configuration that is unsafe to run.
 func (c *Config) Validate() error {
 	if c.Media.Codec != "pcmu" && c.Media.Codec != "pcma" {
-		return fmt.Errorf("PEDANGO_CODEC must be pcmu or pcma, got %q", c.Media.Codec)
+		return fmt.Errorf("PAYVOICE_CODEC must be pcmu or pcma, got %q", c.Media.Codec)
 	}
 	if c.RTP.PortMin <= 0 || c.RTP.PortMax <= c.RTP.PortMin {
 		return fmt.Errorf("invalid RTP port range %d-%d", c.RTP.PortMin, c.RTP.PortMax)
@@ -265,39 +265,39 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("RTP port range must span an even number of ports for RTP/RTCP pairing")
 	}
 	if c.RTP.DTMFPayloadType < 96 || c.RTP.DTMFPayloadType > 127 {
-		return fmt.Errorf("PEDANGO_RTP_DTMF_PT must be a dynamic payload type in 96-127")
+		return fmt.Errorf("PAYVOICE_RTP_DTMF_PT must be a dynamic payload type in 96-127")
 	}
 	if c.Media.JitterMax < c.Media.JitterTarget {
-		return fmt.Errorf("PEDANGO_JITTER_MAX must be >= PEDANGO_JITTER_TARGET")
+		return fmt.Errorf("PAYVOICE_JITTER_MAX must be >= PAYVOICE_JITTER_TARGET")
 	}
 	if c.SIP.Enabled && c.SIP.Register {
 		if c.SIP.RegistrarURI == "" || c.SIP.Username == "" {
-			return fmt.Errorf("SIP registration needs PEDANGO_SIP_REGISTRAR and PEDANGO_SIP_USERNAME")
+			return fmt.Errorf("SIP registration needs PAYVOICE_SIP_REGISTRAR and PAYVOICE_SIP_USERNAME")
 		}
 	}
 	if c.SIP.Enabled && c.SIP.PublicHost == "" {
-		return fmt.Errorf("set PEDANGO_SIP_PUBLIC_HOST: a wildcard listen address cannot be advertised in SDP")
+		return fmt.Errorf("set PAYVOICE_SIP_PUBLIC_HOST: a wildcard listen address cannot be advertised in SDP")
 	}
 
 	if !c.Production() {
 		return nil
 	}
 	if len(c.HTTP.Tokens) == 0 {
-		return fmt.Errorf("PEDANGO_API_TOKENS is required in production")
+		return fmt.Errorf("PAYVOICE_API_TOKENS is required in production")
 	}
 	for _, t := range c.HTTP.Tokens {
 		if len(t) < 32 {
-			return fmt.Errorf("every PEDANGO_API_TOKENS entry must be at least 32 characters")
+			return fmt.Errorf("every PAYVOICE_API_TOKENS entry must be at least 32 characters")
 		}
 	}
 	if c.Webhook.URL != "" && c.Webhook.Secret == "" {
-		return fmt.Errorf("PEDANGO_WEBHOOK_SECRET is required in production when a webhook URL is set")
+		return fmt.Errorf("PAYVOICE_WEBHOOK_SECRET is required in production when a webhook URL is set")
 	}
 	if c.Webhook.Secret != "" && len(c.Webhook.Secret) < 32 {
-		return fmt.Errorf("PEDANGO_WEBHOOK_SECRET must be at least 32 characters")
+		return fmt.Errorf("PAYVOICE_WEBHOOK_SECRET must be at least 32 characters")
 	}
 	if c.Webhook.URL != "" && !strings.HasPrefix(c.Webhook.URL, "https://") {
-		return fmt.Errorf("PEDANGO_WEBHOOK_URL must use https in production")
+		return fmt.Errorf("PAYVOICE_WEBHOOK_URL must use https in production")
 	}
 	return nil
 }

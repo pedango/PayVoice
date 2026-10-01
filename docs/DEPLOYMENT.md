@@ -26,12 +26,12 @@ on a cloud VM, the address the process binds is private and the peer cannot
 reach it. You must advertise the public address explicitly:
 
 ```bash
-PEDANGO_RTP_HOST=0.0.0.0              # bind everywhere
-PEDANGO_SIP_PUBLIC_HOST=41.66.10.20   # advertise the public address
-PEDANGO_WEBRTC_PUBLIC_IP=41.66.10.20  # rewrite the ICE host candidate
+PAYVOICE_RTP_HOST=0.0.0.0              # bind everywhere
+PAYVOICE_SIP_PUBLIC_HOST=41.66.10.20   # advertise the public address
+PAYVOICE_WEBRTC_PUBLIC_IP=41.66.10.20  # rewrite the ICE host candidate
 ```
 
-`PEDANGO_RTP_SYMMETRIC=true` (the default) covers the reverse direction, by
+`PAYVOICE_RTP_SYMMETRIC=true` (the default) covers the reverse direction, by
 sending to wherever packets actually arrive from rather than trusting the
 address the peer advertised. Between the two, NAT works in both directions.
 
@@ -52,7 +52,7 @@ ports:
   - "40000-40400:40000-40400/udp"
 ```
 
-A mismatch between the published range and `PEDANGO_RTP_PORT_MIN/MAX` silently
+A mismatch between the published range and `PAYVOICE_RTP_PORT_MIN/MAX` silently
 drops inbound audio.
 
 ## TURN
@@ -64,9 +64,9 @@ symptom is a call that connects and then carries no audio.
 For production, run [coturn](https://github.com/coturn/coturn):
 
 ```bash
-PEDANGO_ICE_URLS=stun:stun.l.google.com:19302,turn:turn.yourdomain.com:3478
-PEDANGO_TURN_USERNAME=pedango
-PEDANGO_TURN_CREDENTIAL=<secret>
+PAYVOICE_ICE_URLS=stun:stun.l.google.com:19302,turn:turn.yourdomain.com:3478
+PAYVOICE_TURN_USERNAME=payvoice
+PAYVOICE_TURN_CREDENTIAL=<secret>
 ```
 
 Put TURN close to your users. In Ghana that means hosting in Accra or at worst
@@ -82,28 +82,28 @@ or registration.
 credentials to leak or rotate.
 
 ```bash
-PEDANGO_SIP_ENABLED=true
-PEDANGO_SIP_TRUNK=sip:trunk.carrier.com.gh:5060
-PEDANGO_SIP_IDENTITY=233302000000
-PEDANGO_SIP_REGISTER=false
+PAYVOICE_SIP_ENABLED=true
+PAYVOICE_SIP_TRUNK=sip:trunk.carrier.com.gh:5060
+PAYVOICE_SIP_IDENTITY=233302000000
+PAYVOICE_SIP_REGISTER=false
 ```
 
 **Registration** is needed on a dynamic address:
 
 ```bash
-PEDANGO_SIP_REGISTER=true
-PEDANGO_SIP_REGISTRAR=sip:trunk.carrier.com.gh
-PEDANGO_SIP_USERNAME=your-account
-PEDANGO_SIP_PASSWORD=your-password
+PAYVOICE_SIP_REGISTER=true
+PAYVOICE_SIP_REGISTRAR=sip:trunk.carrier.com.gh
+PAYVOICE_SIP_USERNAME=your-account
+PAYVOICE_SIP_PASSWORD=your-password
 ```
 
-Pedango re-registers at half the granted expiry and retries with exponential
+PayVoice re-registers at half the granted expiry and retries with exponential
 backoff. `GET /v1/stats` reports `sip.registered` and the last error.
 
 ### Codec
 
-Set `PEDANGO_CODEC=pcma` for A-law, which is the norm across Africa and Europe.
-It only affects calls Pedango originates: for inbound calls it honours whatever
+Set `PAYVOICE_CODEC=pcma` for A-law, which is the norm across Africa and Europe.
+It only affects calls PayVoice originates: for inbound calls it honours whatever
 the peer offers, preferring the first G.711 variant in their `m=` line. That
 ordering matters — answering with mu-law when a gateway listed A-law first is a
 classic cause of one-way audio.
@@ -111,11 +111,11 @@ classic cause of one-way audio.
 ### Keepalives
 
 Carriers send `OPTIONS` to check the trunk is alive and mark it down if you do
-not reply. Pedango answers these automatically.
+not reply. PayVoice answers these automatically.
 
 ## Tuning
 
-`PEDANGO_JITTER_TARGET` trades latency against resilience. 60 ms suits a good
+`PAYVOICE_JITTER_TARGET` trades latency against resilience. 60 ms suits a good
 link; raise it to 120 ms or more for mobile data, which is what most Ghanaian
 callers are on.
 
@@ -130,7 +130,7 @@ Watch `GET /v1/stats`:
 
 ## Scaling
 
-Pedango is stateful: a leg lives in the process that owns its socket, so calls
+PayVoice is stateful: a leg lives in the process that owns its socket, so calls
 cannot move between instances.
 
 To scale horizontally, run several instances and have your application place
@@ -144,12 +144,12 @@ CPU.
 
 ## Production checklist
 
-- [ ] `PEDANGO_ENV=production` (this enables the guardrails below)
-- [ ] `PEDANGO_API_TOKENS` set, 32+ characters, from `openssl rand -hex 32`
-- [ ] `PEDANGO_WEBHOOK_SECRET` set, 32+ characters, different from the tokens
-- [ ] `PEDANGO_WEBHOOK_URL` is https
+- [ ] `PAYVOICE_ENV=production` (this enables the guardrails below)
+- [ ] `PAYVOICE_API_TOKENS` set, 32+ characters, from `openssl rand -hex 32`
+- [ ] `PAYVOICE_WEBHOOK_SECRET` set, 32+ characters, different from the tokens
+- [ ] `PAYVOICE_WEBHOOK_URL` is https
 - [ ] Control plane bound to loopback or a private network, never public
-- [ ] `PEDANGO_SIP_PUBLIC_HOST` and `PEDANGO_WEBRTC_PUBLIC_IP` set to the public address
+- [ ] `PAYVOICE_SIP_PUBLIC_HOST` and `PAYVOICE_WEBRTC_PUBLIC_IP` set to the public address
 - [ ] UDP port ranges open and matching the configuration exactly
 - [ ] SIP port restricted to carrier source addresses
 - [ ] TURN server deployed and regionally close to users

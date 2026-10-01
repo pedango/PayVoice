@@ -5,7 +5,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/pedango/pedango/internal/config"
+	"github.com/pedango/PayVoice/internal/config"
 )
 
 // Result is one recognition update.
@@ -48,7 +48,7 @@ func NewEngine(cfg config.STTConfig, log *slog.Logger) *Engine {
 	switch cfg.Provider {
 	case "deepgram":
 		if cfg.APIKey == "" {
-			log.Warn("deepgram selected but PEDANGO_STT_API_KEY is empty, speech recognition disabled")
+			log.Warn("deepgram selected but PAYVOICE_STT_API_KEY is empty, speech recognition disabled")
 			break
 		}
 		e.provider = newDeepgram(cfg, log)

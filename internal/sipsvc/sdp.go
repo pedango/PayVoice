@@ -10,14 +10,14 @@ import (
 
 	"github.com/pion/sdp/v3"
 
-	"github.com/pedango/pedango/internal/audio"
+	"github.com/pedango/PayVoice/internal/audio"
 )
 
 // Errors returned during media negotiation.
 var (
 	// ErrNoAudio means the offer contained no audio media description.
 	ErrNoAudio = errors.New("sipsvc: offer has no audio media")
-	// ErrNoCommonCodec means the peer offered no G.711 variant. Pedango
+	// ErrNoCommonCodec means the peer offered no G.711 variant. PayVoice
 	// answers 488 in this case rather than picking something it cannot mix.
 	ErrNoCommonCodec = errors.New("sipsvc: no common codec, G.711 required")
 )
@@ -54,7 +54,7 @@ func (o *Offer) RemoteAddr() (*net.UDPAddr, error) {
 
 // ParseOffer reads a peer's SDP and negotiates a codec.
 //
-// Codec selection prefers the peer's own ordering rather than Pedango's: the
+// Codec selection prefers the peer's own ordering rather than PayVoice's: the
 // first G.711 variant in the m= line wins. Gateways list their preference
 // first, and overriding it is a common cause of one-way audio with carriers
 // that transcode reluctantly.
@@ -146,7 +146,7 @@ func parseRTPMap(v string) (uint8, string, bool) {
 	return uint8(pt), name, true
 }
 
-// AnswerParams describes the SDP Pedango sends back.
+// AnswerParams describes the SDP PayVoice sends back.
 type AnswerParams struct {
 	// Host is the address to advertise, which for a NAT deployment must be the
 	// public address rather than the socket's bind address.
@@ -182,8 +182,8 @@ func BuildSDP(p AnswerParams) []byte {
 
 	var b strings.Builder
 	fmt.Fprintf(&b, "v=0\r\n")
-	fmt.Fprintf(&b, "o=pedango %d %d IN IP4 %s\r\n", sessionID, sessionID, p.Host)
-	fmt.Fprintf(&b, "s=pedango\r\n")
+	fmt.Fprintf(&b, "o=payvoice %d %d IN IP4 %s\r\n", sessionID, sessionID, p.Host)
+	fmt.Fprintf(&b, "s=payvoice\r\n")
 	fmt.Fprintf(&b, "c=IN IP4 %s\r\n", p.Host)
 	fmt.Fprintf(&b, "t=0 0\r\n")
 	fmt.Fprintf(&b, "m=audio %d RTP/AVP %s\r\n", p.Port, formats)

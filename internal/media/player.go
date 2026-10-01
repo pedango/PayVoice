@@ -3,7 +3,7 @@ package media
 import (
 	"sync"
 
-	"github.com/pedango/pedango/internal/audio"
+	"github.com/pedango/PayVoice/internal/audio"
 )
 
 // Player is the playout queue for synthesized prompts on a leg or in a room.

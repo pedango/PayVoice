@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pedango/pedango/internal/audio"
+	"github.com/pedango/PayVoice/internal/audio"
 )
 
 // Errors returned by room operations.
@@ -17,7 +17,7 @@ var (
 )
 
 // Event is one thing that happened on the media plane. Events are what the
-// application reacts to; Pedango itself holds no call logic.
+// application reacts to; PayVoice itself holds no call logic.
 type Event struct {
 	Type string         `json:"type"`
 	At   time.Time      `json:"-"`

@@ -10,12 +10,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/pion/webrtc/v4"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/media"
-	"github.com/pedango/pedango/internal/rtcsvc"
-	"github.com/pedango/pedango/internal/sipsvc"
-	"github.com/pedango/pedango/internal/stt"
-	"github.com/pedango/pedango/internal/tts"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/media"
+	"github.com/pedango/PayVoice/internal/rtcsvc"
+	"github.com/pedango/PayVoice/internal/sipsvc"
+	"github.com/pedango/PayVoice/internal/stt"
+	"github.com/pedango/PayVoice/internal/tts"
 )
 
 // ---------------------------------------------------------------- health
@@ -23,7 +23,7 @@ import (
 func (s *Server) handleHealth(w http.ResponseWriter, _ *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
 		"status":  "ok",
-		"service": "pedango",
+		"service": "payvoice",
 		"uptime":  time.Since(startedAt).String(),
 	})
 }
@@ -80,7 +80,7 @@ func (s *Server) handleConfig(w http.ResponseWriter, _ *http.Request) {
 
 type createRoomRequest struct {
 	// SampleRate is accepted for compatibility with callers that specify one.
-	// Pedango always mixes at 8 kHz, and the response says so.
+	// PayVoice always mixes at 8 kHz, and the response says so.
 	SampleRate int    `json:"sample_rate"`
 	ID         string `json:"id"`
 }
@@ -102,7 +102,7 @@ func (s *Server) handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 
 	room := s.engine.CreateRoom(id)
 	if req.SampleRate != 0 && req.SampleRate != audio.SampleRate {
-		s.log.Debug("ignoring requested sample rate, pedango mixes at 8kHz",
+		s.log.Debug("ignoring requested sample rate, payvoice mixes at 8kHz",
 			"requested", req.SampleRate)
 	}
 
@@ -611,7 +611,7 @@ func (s *Server) handleWebRTCOffer(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, rtcsvc.ErrNoCommonCodec) {
 			fail(w, http.StatusUnsupportedMediaType, "no_common_codec",
-				"The browser must offer PCMU. Pedango does not negotiate Opus.")
+				"The browser must offer PCMU. PayVoice does not negotiate Opus.")
 			return
 		}
 		fail(w, http.StatusBadRequest, "offer_rejected", err.Error())
@@ -634,7 +634,7 @@ func (s *Server) handleWebRTCOffer(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// handleICECandidate accepts a trickled candidate from the browser. Pedango's
+// handleICECandidate accepts a trickled candidate from the browser. PayVoice's
 // own candidates are already in the answer, so this channel is one-way.
 func (s *Server) handleICECandidate(w http.ResponseWriter, r *http.Request) {
 	var req struct {

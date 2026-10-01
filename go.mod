@@ -1,6 +1,6 @@
-module github.com/pedango/pedango
+module github.com/pedango/PayVoice
 
-// This floor is set by the pion WebRTC stack, not by Pedango's own code, which
+// This floor is set by the pion WebRTC stack, not by PayVoice's own code, which
 // uses nothing newer than the method and wildcard routing added to
 // net/http.ServeMux in 1.22. Keep it as low as the dependencies allow: pinning
 // to whatever toolchain happened to be installed only shrinks the set of

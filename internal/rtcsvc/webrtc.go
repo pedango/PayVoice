@@ -16,13 +16,13 @@ import (
 	"github.com/pion/webrtc/v4"
 	pionmedia "github.com/pion/webrtc/v4/pkg/media"
 
-	"github.com/pedango/pedango/internal/audio"
-	"github.com/pedango/pedango/internal/config"
-	"github.com/pedango/pedango/internal/media"
-	"github.com/pedango/pedango/internal/rtpx"
+	"github.com/pedango/PayVoice/internal/audio"
+	"github.com/pedango/PayVoice/internal/config"
+	"github.com/pedango/PayVoice/internal/media"
+	"github.com/pedango/PayVoice/internal/rtpx"
 )
 
-// dtmfPayloadType is the telephone-event number Pedango offers to browsers.
+// dtmfPayloadType is the telephone-event number PayVoice offers to browsers.
 // It is fixed because browsers do not negotiate it dynamically in practice.
 const dtmfPayloadType = 101
 
@@ -169,7 +169,7 @@ func (s *Service) Offer(ctx context.Context, req OfferRequest) (*media.Leg, *Ans
 		MimeType:  mimeFor(s.codec),
 		ClockRate: audio.ClockRate,
 		Channels:  1,
-	}, "audio", "pedango")
+	}, "audio", "payvoice")
 	if err != nil {
 		_ = pc.Close()
 		return nil, nil, fmt.Errorf("rtcsvc: local track: %w", err)
